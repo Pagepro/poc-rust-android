@@ -5,6 +5,17 @@ import expo.modules.kotlin.modules.ModuleDefinition
 import java.net.URL
 
 class MyRustModule : Module() {
+
+  companion object {
+    // Load the native library
+    init {
+      System.loadLibrary("native_rust_lib")
+    }
+  }
+
+  // abstract definition of the rust function
+  external fun rustAdd(left: Int, right: Int): Int
+
   // Each module class must implement the definition function. The definition consists of components
   // that describes the module's functionality and behavior.
   // See https://docs.expo.dev/modules/module-api for more details about available components.
@@ -26,7 +37,12 @@ class MyRustModule : Module() {
     Function("hello") {
       "Hello world! 👋"
     }
-    
+
+    // definition of the rust function
+    AsyncFunction("rustAdd") { left: Int, right: Int ->
+      rustAdd(left, right)
+    }
+
     // Defines a JavaScript function that always returns a Promise and whose native code
     // is by default dispatched on the different thread than the JavaScript runtime runs on.
     AsyncFunction("setValueAsync") { value: String ->
